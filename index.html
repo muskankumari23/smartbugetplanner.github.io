@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Budget Planner</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="light-mode">
+  
+  <!-- Auth Modal -->
+  <!-- <div id="auth-modal" class="modal active">
+    <div class="modal-content glass-card">
+      <div class="auth-tabs">
+        <button id="login-tab" class="active">Login</button>
+        <button id="signup-tab">Sign Up</button>
+      </div>
+      <form id="auth-form">
+        <div class="input-group">
+          <i class="fas fa-user"></i>
+          <input type="text" id="username" placeholder="Username" required>
+        </div>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="password" placeholder="Password" required>
+        </div>
+        <button type="submit" class="btn-primary w-100">Continue</button>
+      </form>
+    </div>
+  </div> -->
+
+  <!-- App Layout -->
+  <div id="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <i class="fas fa-wallet bg-gradient-icon"></i>
+          <span class="logo-text">SmartBudget</span>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active" data-view="dashboard">
+          <i class="fas fa-home"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="#" class="nav-item" data-view="history">
+          <i class="fas fa-history"></i>
+          <span>History</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="#" class="nav-item" id="logout-btn">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Top header -->
+      <header class="topbar">
+        <div>
+          <h2 id="page-title">Dashboard</h2>
+        </div>
+        <div class="topbar-actions">
+          <button id="theme-toggle" class="btn-icon">
+            <i class="fas fa-moon"></i>
+          </button>
+          <div class="user-profile">
+            <div class="avatar"><i class="fas fa-user"></i></div>
+            <span id="current-user">User</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard View -->
+      <div id="dashboard-view" class="view-section active">
+        
+        <div class="grid-layout">
+          <!-- Left Column: Inputs -->
+          <div class="col-main">
+            <!-- Budget Setup -->
+            <div class="card glass-card">
+              <div class="card-header">
+                <h3><i class="fas fa-coins"></i> Total Budget Setup</h3>
+              </div>
+              <div class="card-body">
+                <div class="budget-input-wrapper">
+                  <span class="currency-symbol">$</span>
+                  <input type="number" id="total-budget" placeholder="Enter total budget amount" min="1" required>
+                </div>
+              </div>
+            </div>
+
+            <!-- Add Item Form -->
+            <div class="card glass-card mt-4">
+              <div class="card-header">
+                <h3><i class="fas fa-plus-circle"></i> Add Wishlist Item</h3>
+              </div>
+              <div class="card-body">
+                <form id="add-item-form" class="item-form">
+                  <div class="form-row">
+                    <div class="form-group flex-2">
+                      <label>Item Name</label>
+                      <input type="text" id="item-name" placeholder="e.g. New Laptop" required>
+                    </div>
+                    <div class="form-group flex-1">
+                      <label>Category</label>
+                      <select id="item-category" required>
+                        <option value="electronics">Electronics</option>
+                        <option value="education">Education</option>
+                        <option value="leisure">Leisure</option>
+                        <option value="necessity">Necessity</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group flex-1">
+                      <label>Cost ($)</label>
+                      <input type="number" id="item-cost" placeholder="0" min="1" required>
+                    </div>
+                    <div class="form-group flex-1">
+                      <label>Value/Satisfaction (1-100)</label>
+                      <input type="number" id="item-value" placeholder="1-100" min="1" max="100" required>
+                    </div>
+                    <div class="form-group flex-1">
+                      <label>Priority</label>
+                      <select id="item-priority">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                      </select>
+                    </div>
+                  </div>
+                  <button type="submit" class="btn-secondary mt-2">Add Item</button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Items List -->
+            <div class="card glass-card mt-4">
+              <div class="card-header flex-between">
+                <h3>Waitlist Items</h3>
+                <span class="badge" id="item-count">0 items</span>
+              </div>
+              <div class="card-body list-body">
+                <div id="items-list" class="items-list">
+                  <div class="empty-state">No items added yet.</div>
+                </div>
+              </div>
+              <div class="card-footer">
+                <button id="optimize-btn" class="btn-primary w-100 btn-large" disabled>
+                  <i class="fas fa-magic"></i> Run Smart Optimization (0/1 Knapsack)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Results & Charts (Hidden until optimized) -->
+          <div class="col-side">
+            <div id="results-section" class="hidden slide-in">
+              <!-- Smart Recommendation -->
+              <div class="card glass-card premium-card">
+                <div class="card-header">
+                  <h3><i class="fas fa-lightbulb"></i> Smart Recommendation</h3>
+                </div>
+                <div class="card-body">
+                  <div class="score-grid">
+                    <div class="stat-box">
+                      <span class="stat-label">Efficiency Score</span>
+                      <span class="stat-value text-gradient" id="efficiency-score">0%</span>
+                    </div>
+                    <div class="stat-box">
+                      <span class="stat-label">Remaining Budget</span>
+                      <span class="stat-value" id="savings-amount">$0</span>
+                    </div>
+                  </div>
+                  <div class="recommendation-text mt-3" id="recommendation-text">
+                    <!-- Dynamic text inserted here -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Selected vs Rejected -->
+              <div class="card glass-card mt-4">
+                <div class="card-header tabs-header">
+                  <button class="tab-btn active" data-target="selected-items">Selected (<span id="sel-count">0</span>)</button>
+                  <button class="tab-btn" data-target="rejected-items">Rejected (<span id="rej-count">0</span>)</button>
+                </div>
+                <div class="card-body list-body">
+                  <div id="selected-items" class="result-list active"></div>
+                  <div id="rejected-items" class="result-list hidden"></div>
+                </div>
+              </div>
+
+              <!-- Charts -->
+              <div class="card glass-card mt-4">
+                <div class="card-header">
+                  <h3><i class="fas fa-chart-pie"></i> Budget Allocation</h3>
+                </div>
+                <div class="card-body">
+                  <canvas id="cost-pie-chart" height="200"></canvas>
+                </div>
+              </div>
+              
+              <div class="card glass-card mt-4">
+                <div class="card-header">
+                  <h3><i class="fas fa-chart-bar"></i> Value by Category</h3>
+                </div>
+                <div class="card-body">
+                  <canvas id="value-bar-chart" height="200"></canvas>
+                </div>
+              </div>
+            </div>
+            
+            <div id="results-placeholder" class="placeholder-box glass-card flex-center">
+              <div class="text-center">
+                <img src="https://cdn-icons-png.flaticon.com/512/3233/3233483.png" alt="Optimization" class="placeholder-icon mb-3" width="80" style="opacity:0.5; filter: grayscale(1);">
+                <p class="text-muted">Add items and run optimization to see your smart recommendations here.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- History View -->
+      <div id="history-view" class="view-section hidden">
+        <div class="card glass-card">
+          <div class="card-header">
+            <h3><i class="fas fa-history"></i> Optimization History</h3>
+          </div>
+          <div class="card-body">
+            <div id="history-list" class="history-grid">
+              <div class="empty-state">No previous plans found.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="js/knapsack.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
